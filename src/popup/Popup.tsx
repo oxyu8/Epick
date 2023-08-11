@@ -12,7 +12,7 @@ const Popup = () => {
           target='_blank'
           rel='noopener noreferrer'
         >
-          Learn Preact
+          Welcome to Epick
         </a>
       </p>
       <p data-testid='popup_text' class='p-6 text-3xl text-purple-400'>
