@@ -1,33 +1,30 @@
-interface HTTPClientInterface {
-  get(word: string): void;
+export interface HTTPClientInterface {
+  get<T>(word: string): Promise<T>;
 }
 
-type Headers = {
-  app_id: string;
-  app_key: string;
-};
-
-export class HTTPClient implements HTTPClientInterface {
-  headers: Headers;
+export class HTTPClient<T extends HeadersInit | undefined>
+  implements HTTPClientInterface
+{
+  headers: T;
   baseURL: string;
 
-  constructor() {
-    this.headers = {
-      app_id: import.meta.env.VITE_APP_ID,
-      app_key: import.meta.env.VITE_APP_KEY,
-    };
-    this.baseURL = 'https://od-api.oxforddictionaries.com/api/v2';
+  constructor(headers: T, baseURL: string) {
+    this.headers = headers;
+    this.baseURL = baseURL;
   }
 
-  async get(word: string) {
+  async get<T>(word: string): Promise<T> {
     try {
       const response = await fetch(`${this.baseURL}/entries/en/${word}`, {
         method: 'GET',
         headers: this.headers,
       });
+      const result = await response.json();
+      return result.results as T;
     } catch (error) {
       //TODO: error handling
       console.log(error);
+      return [] as T;
     }
   }
 }
