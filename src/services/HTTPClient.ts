@@ -1,26 +1,32 @@
 interface HTTPClientInterface {
-  get(): void;
+  get(word: string): void;
 }
 
+type Headers = {
+  app_id: string;
+  app_key: string;
+};
+
 export class HTTPClient implements HTTPClientInterface {
-  async get() {
-    const headers = {
+  headers: Headers;
+  baseURL: string;
+
+  constructor() {
+    this.headers = {
       app_id: import.meta.env.VITE_APP_ID,
       app_key: import.meta.env.VITE_APP_KEY,
     };
+    this.baseURL = 'https://od-api.oxforddictionaries.com/api/v2';
+  }
+
+  async get(word: string) {
     try {
-      console.log(import.meta.env.VITE_APP_ID);
-      console.log(import.meta.env.VITE_APP_KEY);
-      const response = await fetch(
-        'https://od-api.oxforddictionaries.com/api/v2/entries/en/test',
-        {
-          method: 'GET',
-          headers,
-        }
-      );
-      console.log(response);
+      const response = await fetch(`${this.baseURL}/entries/en/${word}`, {
+        method: 'GET',
+        headers: this.headers,
+      });
     } catch (error) {
-      console.log('error');
+      //TODO: error handling
       console.log(error);
     }
   }
